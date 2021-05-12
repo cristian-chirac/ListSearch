@@ -1,0 +1,19 @@
+<div class="todos-container">
+  <div class="search-header">
+    <input  class="search-bar"
+          type="text"
+          name="todosSearchInput"
+          id="todosSearchInput"
+          placeholder="Type here to search"
+          [formControl]="search">
+  </div>
+  <ul class="todos-list" *ngIf="viewModel$ | async as viewModel">
+    <li *ngFor="let item of viewModel.todos | todosSearchFilter: viewModel.searchInput">
+      {{ item.title }}
+    </li>
+  </ul>
+  <div class="alert alert-danger error-message"
+    *ngIf="errorMessageAction$ | async as errorMessage">
+    {{ errorMessage }}
+  </div>
+</div>
