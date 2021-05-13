@@ -10,12 +10,13 @@ import {
     BehaviorSubject,
     combineLatest,
     EMPTY,
+    Subject,
 } from 'rxjs';
 import {
     catchError,
     debounceTime,
     map,
-    tap,
+    takeUntil,
 } from 'rxjs/operators';
 
 import { TodosService } from './todos.service';
@@ -26,27 +27,37 @@ import { TodosService } from './todos.service';
   styleUrls: ['./todos.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TodosComponent implements OnInit {
+export class TodosComponent implements OnInit, OnDestroy {
   public search = new FormControl('');
   public placeholder = "Type here to search";
 
-  private errorMessageSubject = new BehaviorSubject<string>("");
-  public errorMessageAction$ = this.errorMessageSubject.asObservable();
+  private _destroyed$ = new Subject();
 
-  private searchInputDelayed$ = this.search.valueChanges.pipe(debounceTime(100));
+  private _searchInputDelayed$ = this.search.valueChanges.pipe(
+    debounceTime(100),
+    takeUntil(this._destroyed$),
+  );
+
+  private _errorMessageSubject = new BehaviorSubject<string>("");
+  public errorMessageAction$ = this._errorMessageSubject.asObservable();
 
   public viewModel$ = combineLatest([
-    this.todosService.todos$,
-    this.searchInputDelayed$,
+    this._todosService.todos$,
+    this._searchInputDelayed$,
   ]).pipe(
     map(([todos, searchInput]) => ({todos, searchInput})),
     catchError(err => {
-      this.errorMessageSubject.next(err);
+      this._errorMessageSubject.next(err);
       return EMPTY;
     })
   );
 
-  constructor(private todosService: TodosService) { }
+  constructor(private _todosService: TodosService) {}
+
+  ngOnDestroy(): void {
+    this._destroyed$.next();
+    this._destroyed$.complete();
+  }
 
   ngOnInit(): void {}
 
