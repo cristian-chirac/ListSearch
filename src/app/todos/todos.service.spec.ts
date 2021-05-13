@@ -31,8 +31,10 @@ describe('TodosService', () => {
     const TITLE_1 = "quis ut nam facilis et officia qui";
 
     service.todos$.subscribe(result => {
-      expect(result.length).toBe(2);
-      expect(result[0].title === TITLE_0 && result[1].title === TITLE_1);
+      expect(result).toEqual([
+        {title: TITLE_0},
+        {title: TITLE_1},
+      ]);
     });
 
     httpMock.expectOne({

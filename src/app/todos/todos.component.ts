@@ -17,6 +17,7 @@ import {
     debounceTime,
     map,
     takeUntil,
+    tap,
 } from 'rxjs/operators';
 
 import { TodosService } from './todos.service';
@@ -35,6 +36,9 @@ export class TodosComponent implements OnInit, OnDestroy {
 
   private _searchInputDelayed$ = this.search.valueChanges.pipe(
     debounceTime(100),
+    tap(value => {
+      console.log(value);
+    }),
     takeUntil(this._destroyed$),
   );
 
@@ -45,7 +49,9 @@ export class TodosComponent implements OnInit, OnDestroy {
     this._todosService.todos$,
     this._searchInputDelayed$,
   ]).pipe(
-    map(([todos, searchInput]) => ({todos, searchInput})),
+    map(([todos, searchInput]) => {
+      return ({todos, searchInput});
+    }),
     catchError(err => {
       this._errorMessageSubject.next(err);
       return EMPTY;

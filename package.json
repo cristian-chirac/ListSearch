@@ -21,6 +21,7 @@
     "@angular/platform-browser": "~11.2.9",
     "@angular/platform-browser-dynamic": "~11.2.9",
     "@angular/router": "~11.2.9",
+    "@uipath/angular": "^11.0.1",
     "bootstrap": "^5.0.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
