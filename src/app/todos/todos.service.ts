@@ -1,16 +1,18 @@
 import {
-    HttpClient,
-    HttpErrorResponse,
+  HttpClient,
+  HttpErrorResponse,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import {
-    Observable,
-    throwError,
+  combineLatest,
+  Observable,
+  throwError,
 } from 'rxjs';
 import {
-    catchError,
-    map,
+  catchError,
+  map,
+  startWith,
 } from 'rxjs/operators';
 
 import { ITodo } from './models/Todo';
@@ -19,16 +21,32 @@ import { ITodo } from './models/Todo';
   providedIn: 'root'
 })
 export class TodosService {
-  public allTodosUrl = 'https://jsonplaceholder.typicode.com/todos';
+  private _todosUrls = [
+    'https://jsonplaceholder.typicode.com/todos',
+    'https://jsonplaceholder.typicode.com/posts',
+  ];
 
-  public todos$ = this.http.get<ITodo[]>(this.allTodosUrl).pipe(
-    map(data => data.map(({title}) => ({title} as ITodo))),
-    catchError(this.handleError),
-  );
+  constructor(private _http: HttpClient) { }
 
-  constructor(private http: HttpClient) {}
+  public getFilteredTodos(filterToken: string): Observable<ITodo[]> {
+    return combineLatest(this._todosUrls.map(
+      this._getTodos
+    )).pipe(
+      map(todosLists => ([] as ITodo[])
+        .concat(...todosLists)
+        .filter(todo => filterToken && todo.title.includes(filterToken))),
+    );
+  }
 
-  private handleError(response: HttpErrorResponse): Observable<never> {
+  private _getTodos = (url: string): Observable<ITodo[]> => {
+    return this._http.get<ITodo[]>(url).pipe(
+      startWith([] as ITodo[]),
+      map(data => data.map(({ title }) => ({ title } as ITodo))),
+      catchError(this._handleError),
+    );
+  }
+
+  private _handleError(response: HttpErrorResponse): Observable<never> {
     let errorMessage = '';
 
     if (response.error instanceof ErrorEvent) {

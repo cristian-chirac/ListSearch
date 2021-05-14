@@ -5,11 +5,21 @@ import {
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
+import { Observable } from 'rxjs';
+import { last } from 'rxjs/operators';
+
+import { ITodo } from './models/Todo';
 import { TodosService } from './todos.service';
 
 describe('TodosService', () => {
+  const DUMMY_URLS = [
+    "/my/url/1",
+    "/my/url/2",
+  ];
+
   let service: TodosService;
   let httpMock: HttpTestingController;
+  let getTodos: (url: string) => Observable<ITodo[]>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -20,6 +30,9 @@ describe('TodosService', () => {
 
     service = TestBed.inject(TodosService);
     httpMock = TestBed.inject(HttpTestingController);
+
+    service["_todosUrls"] = DUMMY_URLS;
+    getTodos = service["_getTodos"].bind(service);
   });
 
   it('should be created', () => {
@@ -30,7 +43,7 @@ describe('TodosService', () => {
     const TITLE_0 = "delectus aut autem";
     const TITLE_1 = "quis ut nam facilis et officia qui";
 
-    service.todos$.subscribe(result => {
+    getTodos(DUMMY_URLS[0]).pipe(last()).subscribe(result => {
       expect(result).toEqual([
         {title: TITLE_0},
         {title: TITLE_1},
@@ -39,7 +52,7 @@ describe('TodosService', () => {
 
     httpMock.expectOne({
       method: 'GET',
-      url: service.allTodosUrl
+      url: DUMMY_URLS[0]
     }).flush([
       {
         "userId": 1,
@@ -59,7 +72,7 @@ describe('TodosService', () => {
   it('should throwError on todos ErrorEvent', () => {
     const ERROR_MSG = 'Some error occured';
 
-    service.todos$.subscribe({
+    getTodos(DUMMY_URLS[0]).subscribe({
       error(result: string) {
         expect(result).toContain(ERROR_MSG);
       }
@@ -67,7 +80,7 @@ describe('TodosService', () => {
 
     httpMock.expectOne({
       method: 'GET',
-      url: service.allTodosUrl
+      url: DUMMY_URLS[0]
     }).error(new ErrorEvent('error', {
       error: {
         message: ERROR_MSG,
@@ -78,7 +91,7 @@ describe('TodosService', () => {
   it('should throwError on todos error response', () => {
     const ERROR_MSG = 'Some error occured';
 
-    service.todos$.subscribe({
+    getTodos(DUMMY_URLS[0]).subscribe({
       error(result: string) {
         expect(result).toContain(ERROR_MSG);
       }
@@ -86,10 +99,81 @@ describe('TodosService', () => {
 
     httpMock.expectOne({
       method: 'GET',
-      url: service.allTodosUrl
+      url: DUMMY_URLS[0]
     }).flush({}, {
       status: 404,
       statusText: ERROR_MSG,
-    })
+    });
+  });
+
+  it('should return no todos on empty filterToken', () => {
+    const TITLE_0 = "delectus aut autem";
+    const TITLE_1 = "quis ut nam facilis et officia qui";
+
+    service.getFilteredTodos('').pipe(last()).subscribe({
+      next(value) {
+        expect(value).toEqual([]);
+      }
+    });
+
+    httpMock.expectOne({
+      method: 'GET',
+      url: DUMMY_URLS[0]
+    }).flush([
+      {
+        "userId": 1,
+        "id": 1,
+        "title": TITLE_0,
+        "completed": false
+      },
+    ]);
+
+    httpMock.expectOne({
+      method: 'GET',
+      url: DUMMY_URLS[1]
+    }).flush([
+      {
+        "userId": 1,
+        "id": 2,
+        "title": TITLE_1,
+        "completed": false
+      }
+    ]);
+  });
+
+  it('should return filtered todos on non-empty filterToken', () => {
+    const TITLE_0 = "delectus aut autem";
+    const TITLE_1 = "quis ut nam facilis et officia qui";
+    const FILTER_TOKEN = "quis";
+
+    service.getFilteredTodos(FILTER_TOKEN).pipe(last()).subscribe({
+      next(value) {
+        expect(value).toEqual([{title: TITLE_1}]);
+      }
+    });
+
+    httpMock.expectOne({
+      method: 'GET',
+      url: DUMMY_URLS[0]
+    }).flush([
+      {
+        "userId": 1,
+        "id": 1,
+        "title": TITLE_0,
+        "completed": false
+      },
+    ]);
+
+    httpMock.expectOne({
+      method: 'GET',
+      url: DUMMY_URLS[1]
+    }).flush([
+      {
+        "userId": 1,
+        "id": 2,
+        "title": TITLE_1,
+        "completed": false
+      }
+    ]);
   });
 });
