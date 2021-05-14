@@ -8,15 +8,17 @@
       placeholder="Type here to search"
       data-testId="search-input">
   </div>
-  <ul *ngIf="viewModel$ | async as viewModel"
-    class="todos-list"
-    data-testId="todos-list">
-    <li *ngFor="let item of viewModel.todos | todosSearchFilter: viewModel.searchInput">
-      {{ item.title }}
-    </li>
-  </ul>
-  <div *ngIf="errorMessageAction$ | async as errorMessage"
+  <div *ngIf="errorMessageAction$ | async as errorMessage; else searchResults"
     class="alert alert-danger error-message">
     {{ errorMessage }}
   </div>
+  <ng-template #searchResults>
+    <ul *ngIf="results$ | async as results"
+      class="todos-list"
+      data-testId="todos-list">
+      <li *ngFor="let item of results">
+        {{ item.title }}
+      </li>
+    </ul>
+  </ng-template>
 </div>
