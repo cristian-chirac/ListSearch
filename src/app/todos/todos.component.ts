@@ -1,19 +1,20 @@
 import {
-  ChangeDetectionStrategy,
-  Component
+    ChangeDetectionStrategy,
+    Component,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
+
 import {
-  BehaviorSubject,
-  Observable
+    BehaviorSubject,
+    Observable,
 } from 'rxjs';
 import {
-  catchError,
-  debounceTime,
-  map,
-  tap,
-  withLatestFrom
+    catchError,
+    debounceTime,
+    switchMap,
+    tap,
 } from 'rxjs/operators';
+
 import { TodosService } from './todos.service';
 
 @Component({
@@ -29,12 +30,7 @@ export class TodosComponent {
   public results$ = this.search.valueChanges.pipe(
     tap(() => this._errorMessage$.next('')),
     debounceTime(100),
-    withLatestFrom(this._todosService.todos$),
-    map(([searchInput, todos]) => {
-      return searchInput !== ''
-        ? todos.filter(todo => todo.title.includes(searchInput))
-        : [];
-    }),
+    switchMap(searchString => this._todosService.getFilteredTodos(searchString)),
     catchError(err => {
       this._errorMessage$.next(err);
       return [];

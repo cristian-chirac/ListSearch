@@ -10,7 +10,11 @@ import {
 import { By } from '@angular/platform-browser';
 import { EventGenerator } from '@uipath/angular/testing';
 
-import { Subject } from 'rxjs';
+import {
+    Observable,
+    of,
+    Subject,
+} from 'rxjs';
 
 import { ITodo } from './models/Todo';
 import { TodosSearchFilterPipe } from './pipes/todos-search-filter.pipe';
@@ -20,27 +24,24 @@ import { TodosService } from './todos.service';
 describe('TodosComponent', () => {
   const TODOS_DELECTUS_1 = "delectus aut autem";
   const TODOS_DELECTUS_2 = "veritatis pariatur delectus";
-  const TODOS_NON_DELECTUS = "quis ut nam facilis et officia qui";
-
-  const DELECTUS_SEARCH_INPUT = "delectus";
-
-  const TODOS_DATA = [
-    TODOS_DELECTUS_1,
-    TODOS_NON_DELECTUS,
-    TODOS_DELECTUS_2,
-  ].map(todoText => ({title: todoText}));
-
   const RESULTS_TODOS_DATA = [
     TODOS_DELECTUS_1,
     TODOS_DELECTUS_2,
   ].map(todoText => ({title: todoText}));
 
+  const SEARCH_INPUT = "delectus";
+
   let component: TodosComponent;
   let fixture: ComponentFixture<TodosComponent>;
-  let mockTodosService: {todos$: Subject<ITodo[]>};
+  let mockTodosService: {
+    getFilteredTodos: (filterToken: string) => Observable<ITodo[]>
+  };
 
   beforeEach(async () => {
-    mockTodosService = {todos$: new Subject<ITodo[]>()};
+    // Service tests filtering of todos, so can mock the filtered result directly
+    mockTodosService = {
+      getFilteredTodos: (_) => of(RESULTS_TODOS_DATA),
+    };
 
     await TestBed.configureTestingModule({
       declarations: [
@@ -71,14 +72,13 @@ describe('TodosComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  fit('should update view model on programatic input change', async (done) => {
+  it('should update view model on programatic input change', async (done) => {
     component.results$.subscribe(values => {
       expect(values).toEqual(RESULTS_TODOS_DATA);
       done();
     });
 
-    mockTodosService.todos$.next(TODOS_DATA);
-    component.search.setValue(DELECTUS_SEARCH_INPUT);
+    component.search.setValue(SEARCH_INPUT);
   });
 
   it('should update filtered todos list on user input change', async (done) => {
@@ -100,8 +100,7 @@ describe('TodosComponent', () => {
       done();
     });
 
-    mockTodosService.todos$.next(TODOS_DATA);
-    searchInput.nativeElement.value = DELECTUS_SEARCH_INPUT;
+    searchInput.nativeElement.value = SEARCH_INPUT;
     searchInput.nativeElement.dispatchEvent(EventGenerator.input());
   });
 });
