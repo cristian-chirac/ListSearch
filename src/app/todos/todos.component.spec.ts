@@ -81,30 +81,27 @@ describe('TodosComponent', () => {
     component.search.setValue(DELECTUS_SEARCH_INPUT);
   });
 
-  // it('should update filtered todos list on user input change', async (done) => {
-  //   const searchInput = fixture.debugElement.query(By.css('[data-testId="search-input"]'));
+  it('should update filtered todos list on user input change', async (done) => {
+    const searchInput = fixture.debugElement.query(By.css('[data-testId="search-input"]'));
 
-  //   component.viewModel$.subscribe(values => {
-  //     expect(values).toEqual({
-  //       todos: TODOS_DATA,
-  //       searchInput: DELECTUS_SEARCH_INPUT,
-  //     });
+    component.results$.subscribe(values => {
+      expect(values).toEqual(RESULTS_TODOS_DATA);
 
-  //     fixture.detectChanges();
+      fixture.detectChanges();
 
-  //     const todosListElement = fixture.debugElement.query(By.css('[data-testId="todos-list"]'));
-  //     const todosText = todosListElement.children.map(child => child.nativeElement.innerText);
+      const todosListElement = fixture.debugElement.query(By.css('[data-testId="todos-list"]'));
+      const todosText = todosListElement.children.map(child => child.nativeElement.innerText);
 
-  //     expect(todosText).toEqual([
-  //       TODOS_DELECTUS_1,
-  //       TODOS_DELECTUS_2,
-  //     ])
+      expect(todosText).toEqual([
+        TODOS_DELECTUS_1,
+        TODOS_DELECTUS_2,
+      ])
 
-  //     done();
-  //   });
+      done();
+    });
 
-  //   mockTodosService.todos$.next(TODOS_DATA);
-  //   searchInput.nativeElement.value = DELECTUS_SEARCH_INPUT;
-  //   searchInput.nativeElement.dispatchEvent(EventGenerator.input());
-  // });
+    mockTodosService.todos$.next(TODOS_DATA);
+    searchInput.nativeElement.value = DELECTUS_SEARCH_INPUT;
+    searchInput.nativeElement.dispatchEvent(EventGenerator.input());
+  });
 });
