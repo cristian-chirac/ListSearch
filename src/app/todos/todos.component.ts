@@ -1,25 +1,19 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    OnDestroy,
-    OnInit,
+  ChangeDetectionStrategy,
+  Component
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-
 import {
-    BehaviorSubject,
-    combineLatest,
-    EMPTY,
-    Subject,
+  BehaviorSubject,
+  Observable
 } from 'rxjs';
 import {
-    catchError,
-    debounceTime,
-    map,
-    takeUntil,
-    tap,
+  catchError,
+  debounceTime,
+  map,
+  tap,
+  withLatestFrom
 } from 'rxjs/operators';
-
 import { TodosService } from './todos.service';
 
 @Component({
@@ -28,43 +22,28 @@ import { TodosService } from './todos.service';
   styleUrls: ['./todos.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TodosComponent implements OnInit, OnDestroy {
+export class TodosComponent {
   public search = new FormControl('');
-  public placeholder = "Type here to search";
+  public errorMessageAction$: Observable<string>;
 
-  private _destroyed$ = new Subject();
-
-  private _searchInputDelayed$ = this.search.valueChanges.pipe(
+  public results$ = this.search.valueChanges.pipe(
+    tap(() => this._errorMessage$.next('')),
     debounceTime(100),
-    tap(value => {
-      console.log(value);
-    }),
-    takeUntil(this._destroyed$),
-  );
-
-  private _errorMessageSubject = new BehaviorSubject<string>("");
-  public errorMessageAction$ = this._errorMessageSubject.asObservable();
-
-  public viewModel$ = combineLatest([
-    this._todosService.todos$,
-    this._searchInputDelayed$,
-  ]).pipe(
-    map(([todos, searchInput]) => {
-      return ({todos, searchInput});
+    withLatestFrom(this._todosService.todos$),
+    map(([searchInput, todos]) => {
+      return searchInput !== ''
+        ? todos.filter(todo => todo.title.includes(searchInput))
+        : [];
     }),
     catchError(err => {
-      this._errorMessageSubject.next(err);
-      return EMPTY;
+      this._errorMessage$.next(err);
+      return [];
     })
   );
 
-  constructor(private _todosService: TodosService) {}
+  private _errorMessage$ = new BehaviorSubject<string>('');
 
-  ngOnDestroy(): void {
-    this._destroyed$.next();
-    this._destroyed$.complete();
+  constructor(private _todosService: TodosService) {
+    this.errorMessageAction$ = this._errorMessage$.asObservable();
   }
-
-  ngOnInit(): void {}
-
 }

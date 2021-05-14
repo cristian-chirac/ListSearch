@@ -11,7 +11,6 @@ import {
 import {
     catchError,
     map,
-    tap,
 } from 'rxjs/operators';
 
 import { ITodo } from './models/Todo';
@@ -23,7 +22,7 @@ export class TodosService {
   public allTodosUrl = 'https://jsonplaceholder.typicode.com/todos';
 
   public todos$ = this.http.get<ITodo[]>(this.allTodosUrl).pipe(
-    map(data => data.map(({title}) => ({title}))),
+    map(data => data.map(({title}) => ({title} as ITodo))),
     catchError(this.handleError),
   );
 
