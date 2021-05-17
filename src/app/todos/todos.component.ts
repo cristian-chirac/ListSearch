@@ -11,6 +11,7 @@ import {
 import {
     catchError,
     debounceTime,
+    filter,
     switchMap,
     tap,
 } from 'rxjs/operators';
@@ -27,8 +28,12 @@ export class TodosComponent {
   public search = new FormControl('');
   public errorMessageAction$: Observable<string>;
 
-  public results$ = this.search.valueChanges.pipe(
-    tap(() => this._errorMessage$.next('')),
+  public searchText$ = this.search.valueChanges;
+
+  public results$ = this.searchText$.pipe(
+    tap(() => {
+      this._errorMessage$.next('');
+    }),
     debounceTime(100),
     switchMap(searchString => this._todosService.getFilteredTodos(searchString)),
     catchError(err => {

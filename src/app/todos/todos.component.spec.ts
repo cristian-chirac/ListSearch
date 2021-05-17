@@ -17,6 +17,7 @@ import {
 } from 'rxjs';
 
 import { ITodo } from './models/Todo';
+import { EmphasizePatternPipe } from './pipes/emphasize-pattern.pipe';
 import { TodosSearchFilterPipe } from './pipes/todos-search-filter.pipe';
 import { TodosComponent } from './todos.component';
 import { TodosService } from './todos.service';
@@ -46,7 +47,7 @@ describe('TodosComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [
         TodosComponent,
-        TodosSearchFilterPipe,
+        EmphasizePatternPipe,
       ],
       imports: [
         HttpClientTestingModule,
