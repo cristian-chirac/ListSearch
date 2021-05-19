@@ -1,40 +1,38 @@
 import {
-  HttpClient,
-  HttpErrorResponse,
+    HttpClient,
+    HttpErrorResponse,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import {
-  combineLatest,
-  Observable,
-  throwError,
+    combineLatest,
+    Observable,
+    throwError,
 } from 'rxjs';
 import {
-  catchError,
-  map,
-  startWith,
+    catchError,
+    map,
+    startWith,
+    tap,
 } from 'rxjs/operators';
 
-import { ITodo } from './models/Todo';
+import { ITodo } from '../models/Todo';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TodosService {
-  private _todosUrls = [
-    'https://jsonplaceholder.typicode.com/todos',
-    'https://jsonplaceholder.typicode.com/posts',
-  ];
 
   constructor(private _http: HttpClient) { }
 
-  public getFilteredTodos(filterToken: string): Observable<ITodo[]> {
-    return combineLatest(this._todosUrls.map(
+  public getFilteredTodos(filterToken: string, todosUrls: string[]): Observable<ITodo[]> {
+    return combineLatest(todosUrls.map(
       this._getTodos
     )).pipe(
+      tap(values => console.log(values)),
       map(todosLists => ([] as ITodo[])
         .concat(...todosLists)
-        .filter(todo => filterToken && todo.title.includes(filterToken))),
+        .filter(todo => !filterToken || todo.title.includes(filterToken))),
     );
   }
 

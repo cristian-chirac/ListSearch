@@ -1,0 +1,35 @@
+<div *ngLet="{
+  errorMessageAction: errorMessageAction$ | async,
+  results: results$ | async,
+  searchText: searchText$ | async
+} as state"
+class="todos-container">
+  <div class="search-header">
+    <input [formControl]="search"
+      autocomplete="off"
+      class="search-bar"
+      type="text"
+      name="todosSearchInput"
+      id="todosSearchInput"
+      placeholder="Type here to search"
+      data-testId="search-input"
+      autofocus>
+  </div>
+
+  <div class="todos-list-container">
+    <div *ngIf="state.errorMessage; else searchResults"
+      class="alert alert-danger error-message">
+      {{ state.errorMessage }}
+    </div>
+    <ng-template #searchResults>
+      <div *ngIf="state.results"
+        class="todos-list"
+        data-testId="todos-list">
+        <p *ngFor="let item of state.results"
+          [innerHTML]="item.title | emphasizePattern: state.searchText"
+          (click)="todoSelectedHandler(item)"
+          >
+      </div>
+    </ng-template>
+  </div>
+</div>
