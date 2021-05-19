@@ -1,0 +1,22 @@
+@use "../../common/styles/search-bar-module" as search-bar-module;
+
+.container {
+  width: 50%;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 45% 50%;
+}
+
+.search-bar {
+  $search-bar-icon-img: url(../images/Drop_Down_Icon.svg);
+  $search-bar-icon-size: 1rem;
+  $search-bar-shadow: 3px 3px 2px rgba($color: #353434c2, $alpha: 0.2);
+  $search-bar-cursor: pointer;
+
+  @include search-bar-module.search-bar-template(
+    $search-bar-icon-size,
+    $search-bar-shadow,
+    $search-bar-cursor,
+  );
+  background-image: $search-bar-icon-img;
+}

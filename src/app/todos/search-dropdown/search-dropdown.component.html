@@ -1,0 +1,26 @@
+<div *ngLet="{
+  showsAutocomplete: showsAutocomplete$ | async,
+  selectedValue: selectedValue$ | async
+} as state"
+  class="container">
+  <div></div>
+  <div (clickOutside)="onClickOutsideAutocomplete()">
+    <todos-autocomplete
+      *ngIf="state.showsAutocomplete; else searchDropdown"
+      [sourceUrls]="todoUrls"
+      (itemSelected)="onItemSelected($event)"
+    ></todos-autocomplete>
+    <ng-template #searchDropdown>
+      <input [(ngModel)]="state.selectedValue"
+        (click)="showAutocomplete($event)"
+        class="search-bar"
+        type="text"
+        name="todosSearchInput"
+        id="todosSearchInput"
+        data-testId="search-input"
+        readonly>
+    </ng-template>
+  </div>
+
+</div>
+

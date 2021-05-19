@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import {
     HttpClientTestingModule,
     HttpTestingController,
@@ -8,7 +7,7 @@ import { TestBed } from '@angular/core/testing';
 import { Observable } from 'rxjs';
 import { last } from 'rxjs/operators';
 
-import { ITodo } from './models/Todo';
+import { ITodo } from '../models/Todo';
 import { TodosService } from './todos.service';
 
 describe('TodosService', () => {
@@ -31,7 +30,6 @@ describe('TodosService', () => {
     service = TestBed.inject(TodosService);
     httpMock = TestBed.inject(HttpTestingController);
 
-    service["_todosUrls"] = DUMMY_URLS;
     getTodos = service["_getTodos"].bind(service);
   });
 
@@ -106,13 +104,16 @@ describe('TodosService', () => {
     });
   });
 
-  it('should return no todos on empty filterToken', () => {
+  it('should return all todos on empty filterToken', () => {
     const TITLE_0 = "delectus aut autem";
     const TITLE_1 = "quis ut nam facilis et officia qui";
 
-    service.getFilteredTodos('').pipe(last()).subscribe({
+    service.getFilteredTodos('', DUMMY_URLS).pipe(last()).subscribe({
       next(value) {
-        expect(value).toEqual([]);
+        expect(value).toEqual([
+          {title: TITLE_0},
+          {title: TITLE_1},
+        ]);
       }
     });
 
@@ -146,7 +147,7 @@ describe('TodosService', () => {
     const TITLE_1 = "quis ut nam facilis et officia qui";
     const FILTER_TOKEN = "quis";
 
-    service.getFilteredTodos(FILTER_TOKEN).pipe(last()).subscribe({
+    service.getFilteredTodos(FILTER_TOKEN, DUMMY_URLS).pipe(last()).subscribe({
       next(value) {
         expect(value).toEqual([{title: TITLE_1}]);
       }

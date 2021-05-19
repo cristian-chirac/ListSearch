@@ -1,0 +1,27 @@
+@mixin search-bar-template(
+  $search-bar-icon-size,
+  $search-bar-shadow,
+  $search-bar-cursor,
+) {
+  $search-bar-height: 2.5rem;
+  $search-bar-width: 100%;
+  $search-bar-font-size: 1rem;
+  $search-bar-border-radius: 10px;
+  $search-bar-padding: 0 10px 0 50px;
+  $search-bar-icon-position: 10px center;
+
+  display: flex;
+  align-self: center;
+  height: $search-bar-height;
+  width: $search-bar-width;
+  font-size: $search-bar-font-size;
+  border-radius: $search-bar-border-radius;
+  border-width: thin;
+  outline: none;
+  padding: $search-bar-padding;
+  background-size: $search-bar-icon-size;
+  background-repeat: no-repeat;
+  background-position: $search-bar-icon-position;
+  box-shadow: $search-bar-shadow;
+  cursor: $search-bar-cursor;
+}

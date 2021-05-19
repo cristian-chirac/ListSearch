@@ -1,23 +1,27 @@
+.todos-list-container {
+  overflow-y: auto;
+  width: 100%;
+}
+
 .todos-list {
-  $list-width: 80%;
-  $list-item-background-color: rgba(190, 187, 182, 0.200);
-  $list-item-font-size: 1.2rem;
-  $list-item-margin: 1rem 0 0 0;
-  $list-item-padding: 0.5rem;
+  $list-item-default-background-color: rgba(228, 226, 225, 0.2);
+  $list-item-hover-background-color: rgba(190, 187, 182, 0.400);
+  $list-item-font-size: 1rem;
+  $list-item-margin: 0.05rem 0;
+  $list-item-padding: 0.5rem 1rem;
   $list-item-border-radius: 5px;
   $list-item-shadow: 2px 2px 3px 0 rgba(0,0,0,0.1);
 
-  align-self: center;
-  width: $list-width;
-
-  li {
-    background-color: $list-item-background-color;
+  p {
+    background-color: $list-item-default-background-color;
     font-size: $list-item-font-size;
-    list-style: none;
     margin: $list-item-margin;
     padding: $list-item-padding;
-    border-radius: $list-item-border-radius;
-    box-shadow: $list-item-shadow;
+    cursor: pointer;
+  }
+
+  p:hover {
+    background-color: $list-item-hover-background-color;
   }
 
 }

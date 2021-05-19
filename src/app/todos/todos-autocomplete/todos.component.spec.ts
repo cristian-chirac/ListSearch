@@ -8,17 +8,16 @@ import {
     ReactiveFormsModule,
 } from '@angular/forms';
 import { By } from '@angular/platform-browser';
+import { UiNgLetModule } from '@uipath/angular/directives/ui-ng-let';
 import { EventGenerator } from '@uipath/angular/testing';
 
 import {
     Observable,
     of,
-    Subject,
 } from 'rxjs';
 
-import { ITodo } from './models/Todo';
-import { EmphasizePatternPipe } from './pipes/emphasize-pattern.pipe';
-import { TodosSearchFilterPipe } from './pipes/todos-search-filter.pipe';
+import { ITodo } from '../models/Todo';
+import { EmphasizePatternPipe } from '../pipes/emphasize-pattern.pipe';
 import { TodosComponent } from './todos.component';
 import { TodosService } from './todos.service';
 
@@ -53,6 +52,7 @@ describe('TodosComponent', () => {
         HttpClientTestingModule,
         FormsModule,
         ReactiveFormsModule,
+        UiNgLetModule,
       ],
       providers: [
         { provide: TodosService, useValue: mockTodosService},
