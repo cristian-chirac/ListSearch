@@ -1,9 +1,12 @@
 import {
+    AfterViewInit,
     ChangeDetectionStrategy,
     Component,
+    ElementRef,
     EventEmitter,
     Input,
     Output,
+    ViewChild,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
@@ -15,6 +18,8 @@ import {
     catchError,
     debounceTime,
     filter,
+    map,
+    startWith,
     switchMap,
     tap,
 } from 'rxjs/operators';
@@ -28,22 +33,24 @@ import { TodosService } from './todos.service';
   styleUrls: ['./todos.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TodosComponent {
+export class TodosComponent implements AfterViewInit {
   @Input() sourceUrls: string[] = [];
 
   @Output() itemSelected = new EventEmitter<ITodo>();
+
+  @ViewChild('searchBarInput', {static: true}) searchBarInput!: ElementRef;
 
   public search = new FormControl('');
   public errorMessageAction$: Observable<string>;
 
   public searchText$ = this.search.valueChanges;
-  public searchValueAction$ = new BehaviorSubject<string>('');
 
-  public results$ = this.searchValueAction$.pipe(
+  public results$ = this.searchText$.pipe(
+    startWith(''),
     tap(() => this._errorMessage$.next('')),
     debounceTime(100),
     switchMap(searchString => this._todosService.getFilteredTodos(searchString, this.sourceUrls)),
-    filter(values => values.length > 0),
+    map(({filteredTodos}) => filteredTodos),
     catchError(err => {
       this._errorMessage$.next(err);
       return [];
@@ -54,10 +61,10 @@ export class TodosComponent {
 
   constructor(private _todosService: TodosService) {
     this.errorMessageAction$ = this._errorMessage$.asObservable();
+  }
 
-    this.searchText$.subscribe({
-      next: (value) => this.searchValueAction$.next(value)
-    });
+  ngAfterViewInit(): void {
+    this.searchBarInput.nativeElement.focus();
   }
 
   public todoSelectedHandler(item: ITodo) {
