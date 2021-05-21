@@ -4,6 +4,7 @@ import {
     Component,
     ElementRef,
     EventEmitter,
+    HostListener,
     Input,
     Output,
     ViewChild,
@@ -23,6 +24,7 @@ import {
     switchMap,
     tap,
 } from 'rxjs/operators';
+import { KEY_NAMES } from 'src/app/common/constants/keyboard_utils';
 
 import { ITodo } from '../models/Todo';
 import { TodosService } from './todos.service';
@@ -37,6 +39,7 @@ export class TodosComponent implements AfterViewInit {
   @Input() sourceUrls: string[] = [];
 
   @Output() itemSelected = new EventEmitter<ITodo>();
+  @Output() close = new EventEmitter<void>();
 
   @ViewChild('searchBarInput', {static: true}) searchBarInput!: ElementRef;
 
@@ -69,6 +72,13 @@ export class TodosComponent implements AfterViewInit {
 
   public todoSelectedHandler(item: ITodo) {
     this.itemSelected.emit(item);
+  }
+
+  @HostListener('window:keyup', ['$event'])
+  private keyEvent(event: KeyboardEvent) {
+    if (event.key === KEY_NAMES.ESCAPE) {
+      this.close.emit();
+    }
   }
 
 }

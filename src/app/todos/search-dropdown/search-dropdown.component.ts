@@ -29,14 +29,13 @@ export class SearchDropdownComponent {
     this.showsAutocomplete$.next(false);
   }
 
-  onClickOutsideAutocomplete() {
+  closeAutocomplete() {
     this.showsAutocomplete$.next(false);
   }
 
   public showAutocomplete(event: MouseEvent) {
     event.stopPropagation();
     this.showsAutocomplete$.next(true);
-    // this.searchBarInput.focus();
   }
 
 }
