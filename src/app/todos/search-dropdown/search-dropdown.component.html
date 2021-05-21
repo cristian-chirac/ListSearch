@@ -2,24 +2,21 @@
   showsAutocomplete: showsAutocomplete$ | async,
   selectedValue: selectedValue$ | async
 } as state"
-  class="container">
-  <div></div>
-  <div (clickOutside)="closeAutocomplete()">
-    <todos-autocomplete
-      *ngIf="state.showsAutocomplete; else searchDropdown"
-      [sourceUrls]="todoUrls"
-      (itemSelected)="onItemSelected($event)"
-      (close)="closeAutocomplete()"
-    ></todos-autocomplete>
-    <ng-template #searchDropdown>
-      <input [(ngModel)]="state.selectedValue"
-        (click)="showAutocomplete($event)"
-        class="search-bar"
-        type="text"
-        data-testId="search-input"
-        readonly>
-    </ng-template>
-  </div>
-
+(clickOutside)="closeAutocomplete()"
+class="container">
+  <todos-autocomplete
+    *ngIf="state.showsAutocomplete; else searchDropdown"
+    [sourceUrls]="sourceUrls"
+    (itemSelected)="onItemSelected($event)"
+    (close)="closeAutocomplete()"
+  ></todos-autocomplete>
+  <ng-template #searchDropdown>
+    <input [(ngModel)]="state.selectedValue"
+      (click)="showAutocomplete($event)"
+      class="search-bar"
+      type="text"
+      data-testId="search-input"
+      readonly>
+  </ng-template>
 </div>
 

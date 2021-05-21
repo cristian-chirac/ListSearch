@@ -31,13 +31,10 @@ export class TodosService {
   constructor(private _http: HttpClient) { }
 
   public getFilteredTodos(filterToken: string, todosUrls: string[]): Observable<IFilteredTodos> {
-    console.log(`token: ${filterToken}`);
-
     return combineLatest(todosUrls.map(
       this._getTodos
     )).pipe(
       skip(1),
-      tap(value => console.log(value)),
       map(todosLists => ({
         filterToken,
         filteredTodos: ([] as ITodo[])

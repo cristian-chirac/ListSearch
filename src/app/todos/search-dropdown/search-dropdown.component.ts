@@ -1,6 +1,9 @@
 import {
     ChangeDetectionStrategy,
     Component,
+    EventEmitter,
+    Input,
+    Output,
 } from '@angular/core';
 
 import { BehaviorSubject } from 'rxjs';
@@ -14,10 +17,9 @@ import { ITodo } from '../models/Todo';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchDropdownComponent {
-  public todoUrls = [
-    'https://jsonplaceholder.typicode.com/todos',
-    'https://jsonplaceholder.typicode.com/posts',
-  ];
+  @Input() sourceUrls: string[] = [];
+
+  @Output() itemSelected = new EventEmitter<ITodo>();
 
   public showsAutocomplete$ = new BehaviorSubject<boolean>(false);
   public selectedValue$ = new BehaviorSubject<string>("Select Item");
@@ -27,6 +29,8 @@ export class SearchDropdownComponent {
   onItemSelected(item: ITodo) {
     this.selectedValue$.next(item.title);
     this.showsAutocomplete$.next(false);
+
+    this.itemSelected.emit(item);
   }
 
   closeAutocomplete() {
