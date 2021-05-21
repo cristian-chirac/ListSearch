@@ -11,12 +11,17 @@ import {
 } from 'rxjs';
 import {
     catchError,
+    filter,
     map,
+    skip,
     startWith,
     tap,
 } from 'rxjs/operators';
 
-import { ITodo } from '../models/Todo';
+import {
+    IFilteredTodos,
+    ITodo,
+} from '../models/Todo';
 
 @Injectable({
   providedIn: 'root'
@@ -25,14 +30,21 @@ export class TodosService {
 
   constructor(private _http: HttpClient) { }
 
-  public getFilteredTodos(filterToken: string, todosUrls: string[]): Observable<ITodo[]> {
+  public getFilteredTodos(filterToken: string, todosUrls: string[]): Observable<IFilteredTodos> {
+    console.log(`token: ${filterToken}`);
+
     return combineLatest(todosUrls.map(
       this._getTodos
     )).pipe(
-      tap(values => console.log(values)),
-      map(todosLists => ([] as ITodo[])
+      skip(1),
+      tap(value => console.log(value)),
+      map(todosLists => ({
+        filterToken,
+        filteredTodos: ([] as ITodo[])
         .concat(...todosLists)
-        .filter(todo => !filterToken || todo.title.includes(filterToken))),
+        .filter(todo => !filterToken || todo.title.includes(filterToken))
+      })),
+
     );
   }
 

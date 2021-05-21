@@ -36,6 +36,7 @@ export class SearchDropdownComponent {
   public showAutocomplete(event: MouseEvent) {
     event.stopPropagation();
     this.showsAutocomplete$.next(true);
+    // this.searchBarInput.focus();
   }
 
 }

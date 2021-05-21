@@ -5,15 +5,13 @@
 } as state"
 class="todos-container">
   <div class="search-header">
-    <input [formControl]="search"
+    <input #searchBarInput
+      [formControl]="search"
       autocomplete="off"
       class="search-bar"
       type="text"
-      name="todosSearchInput"
-      id="todosSearchInput"
       placeholder="Type here to search"
-      data-testId="search-input"
-      autofocus>
+      data-testId="search-input">
   </div>
 
   <div class="todos-list-container">
