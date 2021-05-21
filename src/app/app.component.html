@@ -1,1 +1,7 @@
-<search-dropdown></search-dropdown>
+<div class="app-container">
+  <search-dropdown
+    [sourceUrls]="todoUrls"
+    (itemSelected)="onItemSelected($event)"
+    class="search-dropdown"
+></search-dropdown>
+</div>
