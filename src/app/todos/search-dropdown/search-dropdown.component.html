@@ -3,7 +3,7 @@
   selectedValue: selectedValue$ | async
 } as state"
 (clickOutside)="closeAutocomplete()"
-class="container">
+class="dropdown-container">
   <todos-autocomplete
     *ngIf="state.showsAutocomplete; else searchDropdown"
     [sourceUrls]="sourceUrls"

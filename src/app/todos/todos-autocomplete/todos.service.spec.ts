@@ -110,10 +110,13 @@ describe('TodosService', () => {
 
     service.getFilteredTodos('', DUMMY_URLS).pipe(last()).subscribe({
       next(value) {
-        expect(value).toEqual([
-          {title: TITLE_0},
-          {title: TITLE_1},
-        ]);
+        expect(value).toEqual({
+          filterToken: '',
+          filteredTodos: [
+            {title: TITLE_0},
+            {title: TITLE_1},
+          ]
+        });
       }
     });
 
@@ -149,7 +152,10 @@ describe('TodosService', () => {
 
     service.getFilteredTodos(FILTER_TOKEN, DUMMY_URLS).pipe(last()).subscribe({
       next(value) {
-        expect(value).toEqual([{title: TITLE_1}]);
+        expect(value).toEqual({
+          filterToken: FILTER_TOKEN,
+          filteredTodos: [{title: TITLE_1}],
+        });
       }
     });
 

@@ -4,25 +4,18 @@
   overflow-y: auto;
 }
 
-.todos-list {
-  $list-item-default-background-color: rgba(228, 226, 225, 0.2);
-  $list-item-hover-background-color: rgba(190, 187, 182, 0.400);
-  $list-item-font-size: 1rem;
-  $list-item-margin: 0.05rem 0;
-  $list-item-padding: 0.5rem 1rem;
-  $list-item-border-radius: 5px;
-  $list-item-shadow: 2px 2px 3px 0 rgba(0,0,0,0.1);
+.default-suggestion {
+  background-color: rgba(228, 226, 225, 0.2);
+  font-size: 1rem;
+  margin: 0.05rem 0;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
 
-  p {
-    background-color: $list-item-default-background-color;
-    font-size: $list-item-font-size;
-    margin: $list-item-margin;
-    padding: $list-item-padding;
-    cursor: pointer;
-  }
+.default-suggestion:hover {
+  background-color: rgba(44, 43, 42, 0.2);
+}
 
-  p:hover {
-    background-color: $list-item-hover-background-color;
-  }
-
+.focus-suggestion {
+  background-color: rgba(190, 187, 182, 0.400);
 }

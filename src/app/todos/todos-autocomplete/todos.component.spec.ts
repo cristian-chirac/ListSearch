@@ -16,7 +16,10 @@ import {
     of,
 } from 'rxjs';
 
-import { ITodo } from '../models/Todo';
+import {
+    IFilteredTodos,
+    ITodo,
+} from '../models/Todo';
 import { EmphasizePatternPipe } from '../pipes/emphasize-pattern.pipe';
 import { TodosComponent } from './todos.component';
 import { TodosService } from './todos.service';
@@ -34,13 +37,16 @@ describe('TodosComponent', () => {
   let component: TodosComponent;
   let fixture: ComponentFixture<TodosComponent>;
   let mockTodosService: {
-    getFilteredTodos: (filterToken: string) => Observable<ITodo[]>
+    getFilteredTodos: (filterToken: string, todosUrls: string[]) => Observable<IFilteredTodos>
   };
 
   beforeEach(async () => {
     // Service tests filtering of todos, so can mock the filtered result directly
     mockTodosService = {
-      getFilteredTodos: (_) => of(RESULTS_TODOS_DATA),
+      getFilteredTodos: (filterToken: string, _) => of({
+        filterToken,
+        filteredTodos: RESULTS_TODOS_DATA,
+      }),
     };
 
     await TestBed.configureTestingModule({
