@@ -1,7 +1,8 @@
 <div *ngLet="{
   errorMessageAction: errorMessageAction$ | async,
   results: results$ | async,
-  searchText: searchText$ | async
+  searchText: searchText$ | async,
+  focusSuggestionIndex: focusSuggestionIndexAction$ | async
 } as state"
 class="todos-container">
   <div class="search-header">
@@ -21,11 +22,12 @@ class="todos-container">
     </div>
     <ng-template #searchResults>
       <div *ngIf="state.results"
-        class="todos-list"
         data-testId="todos-list">
-        <p *ngFor="let item of state.results"
+        <p #todos *ngFor="let item of state.results; index as i"
           [innerHTML]="item.title | emphasizePattern: state.searchText"
+          [class.focus-suggestion]="i === state.focusSuggestionIndex"
           (click)="todoSelectedHandler(item)"
+          class="default-suggestion"
           >
       </div>
     </ng-template>
