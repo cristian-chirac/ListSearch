@@ -4,12 +4,20 @@
   overflow-y: auto;
 }
 
-.default-suggestion {
+.default-suggestion, .no-results-suggestion {
   background-color: rgba(228, 226, 225, 0.2);
   font-size: 1rem;
   margin: 0.05rem 0;
   padding: 0.5rem 1rem;
+}
+
+.default-suggestion {
   cursor: pointer;
+}
+
+.no-results-suggestion {
+  color: rgba(#3a3a3a, 0.7);
+  font-style: italic;
 }
 
 .default-suggestion:hover {

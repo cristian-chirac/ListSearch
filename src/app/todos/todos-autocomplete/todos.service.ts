@@ -24,7 +24,7 @@ import {
 } from '../models/Todo';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TodosService {
 
@@ -32,7 +32,7 @@ export class TodosService {
 
   public getFilteredTodos(filterToken: string, todosUrls: string[]): Observable<IFilteredTodos> {
     return combineLatest(todosUrls.map(
-      this._getTodos
+      this._getTodos,
     )).pipe(
       skip(1),
       map(todosLists => ({
