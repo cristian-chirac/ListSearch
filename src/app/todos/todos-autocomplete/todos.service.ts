@@ -11,11 +11,9 @@ import {
 } from 'rxjs';
 import {
     catchError,
-    filter,
     map,
     skip,
     startWith,
-    tap,
 } from 'rxjs/operators';
 
 import {
@@ -38,8 +36,8 @@ export class TodosService {
       map(todosLists => ({
         filterToken,
         filteredTodos: ([] as ITodo[])
-        .concat(...todosLists)
-        .filter(todo => !filterToken || todo.title.includes(filterToken))
+            .concat(...todosLists)
+            .filter(todo => !filterToken || todo.title.includes(filterToken))
       })),
 
     );

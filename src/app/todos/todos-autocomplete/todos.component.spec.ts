@@ -16,10 +16,7 @@ import {
     of,
 } from 'rxjs';
 
-import {
-    IFilteredTodos,
-    ITodo,
-} from '../models/Todo';
+import { IFilteredTodos } from '../models/Todo';
 import { EmphasizePatternPipe } from '../pipes/emphasize-pattern.pipe';
 import { TodosComponent } from './todos.component';
 import { TodosService } from './todos.service';
