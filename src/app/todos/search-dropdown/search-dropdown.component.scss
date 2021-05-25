@@ -1,20 +1,26 @@
 @use "../../common/styles/search-bar-module" as search-bar-module;
 
 .dropdown-container {
-  width: 100%;
-  height: 100%;
-}
+    width: 100%;
+    height: 100%;
 
-.search-bar {
-  $search-bar-icon-img: url(../images/Drop_Down_Icon.svg);
-  $search-bar-icon-size: 1rem;
-  $search-bar-shadow: 3px 3px 2px rgba($color: #353434c2, $alpha: 0.2);
-  $search-bar-cursor: pointer;
+    .search-bar {
+        $search-bar-icon-img: url(../images/Drop_Down_Icon.svg);
+        $search-bar-icon-size: 1rem;
+        $search-bar-shadow: 3px 3px 2px
+            rgba(
+                $color: #353434c2,
+                $alpha: 0.2,
+            );
+        $search-bar-cursor: pointer;
+        $search-bar-background-color: rgba(228, 226, 225, 0.5);
 
-  @include search-bar-module.search-bar-template(
-    $search-bar-icon-size,
-    $search-bar-shadow,
-    $search-bar-cursor,
-  );
-  background-image: $search-bar-icon-img;
+        @include search-bar-module.search-bar-template($search-bar-icon-size, $search-bar-shadow, $search-bar-cursor);
+        background-image: $search-bar-icon-img;
+        background-color: $search-bar-background-color;
+    }
+
+    .search-bar::placeholder {
+        color: black;
+    }
 }
