@@ -7,7 +7,6 @@ import {
     HostListener,
     Input,
     OnDestroy,
-    OnInit,
     Output,
     QueryList,
     ViewChild,
@@ -17,7 +16,6 @@ import { FormControl } from '@angular/forms';
 
 import {
     BehaviorSubject,
-    combineLatest,
     Observable,
     Subject,
     Subscription,
@@ -25,8 +23,6 @@ import {
 import {
     catchError,
     debounceTime,
-    filter,
-    first,
     map,
     startWith,
     switchMap,
@@ -151,7 +147,7 @@ export class TodosComponent implements AfterViewInit, OnDestroy {
   }
 
   @HostListener('window:keyup', ['$event'])
-  private keyEvent(event: KeyboardEvent) {
+  public keyEvent(event: KeyboardEvent) {
     switch (event.key) {
       case KEY_NAMES.ESCAPE:
         this.close.emit();
