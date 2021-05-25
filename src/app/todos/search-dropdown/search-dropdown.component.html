@@ -11,6 +11,7 @@ class="dropdown-container">
     (close)="closeAutocomplete()"
   ></todos-autocomplete>
   <ng-template #searchDropdown>
+    <!-- why two way binding here? -->
     <input [(ngModel)]="state.selectedValue"
       (click)="showAutocomplete($event)"
       class="search-bar"

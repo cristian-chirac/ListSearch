@@ -8,9 +8,9 @@ describe('SearchDropdownComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SearchDropdownComponent ]
+      declarations: [SearchDropdownComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {
@@ -20,6 +20,7 @@ describe('SearchDropdownComponent', () => {
   });
 
   it('should create', () => {
+    // you'll need more than this for coverage :D
     expect(component).toBeTruthy();
   });
 });

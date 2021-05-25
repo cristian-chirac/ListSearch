@@ -1,36 +1,36 @@
 import {
-    AfterViewInit,
-    ChangeDetectionStrategy,
-    Component,
-    ElementRef,
-    EventEmitter,
-    HostListener,
-    Input,
-    OnDestroy,
-    OnInit,
-    Output,
-    QueryList,
-    ViewChild,
-    ViewChildren,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  QueryList,
+  ViewChild,
+  ViewChildren,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 import {
-    BehaviorSubject,
-    combineLatest,
-    Observable,
-    Subject,
-    Subscription,
+  BehaviorSubject,
+  combineLatest,
+  Observable,
+  Subject,
+  Subscription,
 } from 'rxjs';
 import {
-    catchError,
-    debounceTime,
-    filter,
-    map,
-    startWith,
-    switchMap,
-    tap,
-    withLatestFrom,
+  catchError,
+  debounceTime,
+  filter,
+  map,
+  startWith,
+  switchMap,
+  tap,
+  withLatestFrom,
 } from 'rxjs/operators';
 import { KEY_NAMES } from 'src/app/common/constants/keyboard_utils';
 
@@ -49,10 +49,12 @@ export class TodosComponent implements AfterViewInit, OnDestroy {
   @Output() itemSelected = new EventEmitter<ITodo>();
   @Output() close = new EventEmitter<void>();
 
-  @ViewChild('searchBarInput', {static: true}) searchBarInput!: ElementRef;
+  @ViewChild('searchBarInput', { static: true }) searchBarInput!: ElementRef;
+  // any is strogly discouraged especially if accessing members on the object (line 123)
   @ViewChildren('todos') todosListViewElements!: QueryList<any>;
 
   public search = new FormControl('');
+  // unused
   public errorMessageAction$: Observable<string>;
   public searchText$ = this.search.valueChanges;
   public focusSuggestionIndexAction$: Observable<number>;
@@ -62,24 +64,24 @@ export class TodosComponent implements AfterViewInit, OnDestroy {
     tap(() => this._errorMessage$.next('')),
     debounceTime(100),
     switchMap(searchString => this._todosService.getFilteredTodos(searchString, this.sourceUrls)),
-    map(({filteredTodos}) => filteredTodos),
+    map(({ filteredTodos }) => filteredTodos),
     catchError(err => {
       this._errorMessage$.next(err);
       return [];
     })
   );
 
+  // unused
   private _errorMessage$ = new BehaviorSubject<string>('');
-
   private _focusSuggestionIndex$ = new BehaviorSubject<number>(-1);
-
   private _focusSuggestionArrowMove$ = new Subject<
     typeof KEY_NAMES.ARROW_UP |
     typeof KEY_NAMES.ARROW_DOWN
   >();
+
+  // we use the takeUntil(destroyed$) pattern to avoid storing the subscriptions
   private _focusSuggestionArrowMoveSubscription: Subscription;
   private _focusSuggestionScrollToSubscription!: Subscription;
-
   private _focusSuggestionEnter$ = new Subject<void>();
   private _focusSuggestionEnterSubscription!: Subscription;
 
@@ -88,7 +90,7 @@ export class TodosComponent implements AfterViewInit, OnDestroy {
     this.focusSuggestionIndexAction$ = this._focusSuggestionIndex$.asObservable();
 
     this._focusSuggestionArrowMoveSubscription = this._focusSuggestionArrowMove$.pipe(
-      withLatestFrom(
+      withLatestFrom( // no real need for withLatestFrom, you may also simply use this.results$.value / this._focusSuggestionIndex$.value
         this.results$.pipe(map(results => results.length)),
         this._focusSuggestionIndex$,
       ),
@@ -105,7 +107,7 @@ export class TodosComponent implements AfterViewInit, OnDestroy {
     ).subscribe();
 
     this._focusSuggestionEnterSubscription = this._focusSuggestionEnter$.pipe(
-      withLatestFrom(
+      withLatestFrom( // same as above
         this.results$,
         this._focusSuggestionIndex$
       ),
@@ -115,6 +117,7 @@ export class TodosComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.searchBarInput.nativeElement.focus();
+
     this._focusSuggestionScrollToSubscription = this._focusSuggestionIndex$.pipe(
       withLatestFrom(this.todosListViewElements.changes),
       tap(([suggestionIndex, resultsElems]) => {
@@ -128,6 +131,7 @@ export class TodosComponent implements AfterViewInit, OnDestroy {
     ).subscribe();
   }
 
+  // no need for :void
   ngOnDestroy(): void {
     this._focusSuggestionArrowMoveSubscription.unsubscribe();
     this._focusSuggestionEnterSubscription.unsubscribe();
