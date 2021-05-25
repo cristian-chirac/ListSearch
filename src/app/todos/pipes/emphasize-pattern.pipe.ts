@@ -10,7 +10,7 @@ export class EmphasizePatternPipe implements PipeTransform {
 
   transform(text: string, pattern: string): string {
     if (!pattern) return text;
-    return text.replace(pattern, `<strong>${pattern}</strong>`);
+    return text.replace(new RegExp(pattern, 'g'), `<strong>${pattern}</strong>`);
   }
 
 }

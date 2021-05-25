@@ -4,6 +4,7 @@
   searchText: searchText$ | async,
   focusSuggestionIndex: focusSuggestionIndexAction$ | async
 } as state"
+(clickOutside)="close.emit()"
 class="todos-container">
   <div class="search-header">
     <input #searchBarInput
@@ -21,7 +22,7 @@ class="todos-container">
       {{ state.errorMessage }}
     </div>
     <ng-template #searchResults>
-      <div *ngIf="state.results"
+      <div *ngIf="state.results && state.results.length > 0; else noResults"
         data-testId="todos-list">
         <p #todos *ngFor="let item of state.results; index as i"
           [innerHTML]="item.title | emphasizePattern: state.searchText"
@@ -30,6 +31,13 @@ class="todos-container">
           class="default-suggestion"
           >
       </div>
+      <ng-template #noResults>
+        <p *ngIf="state.results && state.results.length === 0"
+          class="no-results-suggestion"
+        >
+          (no results)
+        </p>
+      </ng-template>
     </ng-template>
   </div>
 </div>

@@ -26,6 +26,7 @@ import {
     catchError,
     debounceTime,
     filter,
+    first,
     map,
     startWith,
     switchMap,
@@ -38,19 +39,26 @@ import { ITodo } from '../models/Todo';
 import { TodosService } from './todos.service';
 
 @Component({
-  selector: 'todos-autocomplete',
+  selector: 'ui-todos-autocomplete',
   templateUrl: './todos.component.html',
   styleUrls: ['./todos.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TodosComponent implements AfterViewInit, OnDestroy {
-  @Input() sourceUrls: string[] = [];
+  @Input()
+  public sourceUrls: string[] = [];
+  @Input()
+  public selectedTodoTitle = '';
 
-  @Output() itemSelected = new EventEmitter<ITodo>();
-  @Output() close = new EventEmitter<void>();
+  @Output()
+  public itemSelected = new EventEmitter<ITodo>();
+  @Output()
+  public close = new EventEmitter<void>();
 
-  @ViewChild('searchBarInput', {static: true}) searchBarInput!: ElementRef;
-  @ViewChildren('todos') todosListViewElements!: QueryList<any>;
+  @ViewChild('searchBarInput', { static: true })
+  public searchBarInput!: ElementRef;
+  @ViewChildren('todos')
+  public todosListViewElements!: QueryList<any>;
 
   public search = new FormControl('');
   public errorMessageAction$: Observable<string>;
@@ -62,11 +70,19 @@ export class TodosComponent implements AfterViewInit, OnDestroy {
     tap(() => this._errorMessage$.next('')),
     debounceTime(100),
     switchMap(searchString => this._todosService.getFilteredTodos(searchString, this.sourceUrls)),
-    map(({filteredTodos}) => filteredTodos),
+    map(({ filteredTodos }) => filteredTodos),
+    tap(todos => {
+      if (!this.selectedTodoTitle) return;
+
+      const selectedTodoIndex = todos.findIndex(todo => todo.title === this.selectedTodoTitle);
+      if (selectedTodoIndex >= 0) {
+        this._focusSuggestionIndex$.next(selectedTodoIndex);
+      }
+    }),
     catchError(err => {
       this._errorMessage$.next(err);
       return [];
-    })
+    }),
   );
 
   private _errorMessage$ = new BehaviorSubject<string>('');
@@ -107,7 +123,7 @@ export class TodosComponent implements AfterViewInit, OnDestroy {
     this._focusSuggestionEnterSubscription = this._focusSuggestionEnter$.pipe(
       withLatestFrom(
         this.results$,
-        this._focusSuggestionIndex$
+        this._focusSuggestionIndex$,
       ),
       tap(([_, todos, selectedTodoIndex]) => this.itemSelected.emit(todos[selectedTodoIndex])),
     ).subscribe();
@@ -120,9 +136,9 @@ export class TodosComponent implements AfterViewInit, OnDestroy {
       tap(([suggestionIndex, resultsElems]) => {
         const suggestionElem = resultsElems.toArray()[suggestionIndex];
         suggestionElem.nativeElement.scrollIntoView({
-          behavior: "smooth",
-          block: "end",
-          inline: "nearest"
+          behavior: 'smooth',
+          block: 'end',
+          inline: 'nearest',
         });
       }),
     ).subscribe();

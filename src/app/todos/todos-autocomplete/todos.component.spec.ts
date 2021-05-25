@@ -25,14 +25,14 @@ import { TodosComponent } from './todos.component';
 import { TodosService } from './todos.service';
 
 describe('TodosComponent', () => {
-  const TODOS_DELECTUS_1 = "delectus aut autem";
-  const TODOS_DELECTUS_2 = "veritatis pariatur delectus";
+  const TODOS_DELECTUS_1 = 'delectus aut autem';
+  const TODOS_DELECTUS_2 = 'veritatis pariatur delectus';
   const RESULTS_TODOS_DATA = [
     TODOS_DELECTUS_1,
     TODOS_DELECTUS_2,
   ].map(todoText => ({title: todoText}));
 
-  const SEARCH_INPUT = "delectus";
+  const SEARCH_INPUT = 'delectus';
 
   let component: TodosComponent;
   let fixture: ComponentFixture<TodosComponent>;

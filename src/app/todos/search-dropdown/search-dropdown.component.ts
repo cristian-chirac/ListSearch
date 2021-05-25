@@ -11,18 +11,20 @@ import { BehaviorSubject } from 'rxjs';
 import { ITodo } from '../models/Todo';
 
 @Component({
-  selector: 'search-dropdown',
+  selector: 'ui-search-dropdown',
   templateUrl: './search-dropdown.component.html',
   styleUrls: ['./search-dropdown.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchDropdownComponent {
-  @Input() sourceUrls: string[] = [];
+  @Input()
+  public sourceUrls: string[] = [];
 
-  @Output() itemSelected = new EventEmitter<ITodo>();
+  @Output()
+  public itemSelected = new EventEmitter<ITodo>();
 
   public showsAutocomplete$ = new BehaviorSubject<boolean>(false);
-  public selectedValue$ = new BehaviorSubject<string>("Select Item");
+  public selectedValue$ = new BehaviorSubject<string>('Select Item');
 
   constructor() {}
 

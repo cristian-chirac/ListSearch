@@ -3,9 +3,9 @@ import { Component } from '@angular/core';
 import { ITodo } from './todos/models/Todo';
 
 @Component({
-  selector: 'app-root',
+  selector: 'ui-app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
   public title = 'ListSearch';
@@ -16,6 +16,6 @@ export class AppComponent {
   ];
 
   public onItemSelected(item: ITodo) {
-    console.log(`Selected todo: ${item.title}.`)
+    console.log(`Selected todo: ${item.title}.`);
   }
 }

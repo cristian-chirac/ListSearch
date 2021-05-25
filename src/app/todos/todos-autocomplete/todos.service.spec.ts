@@ -12,8 +12,8 @@ import { TodosService } from './todos.service';
 
 describe('TodosService', () => {
   const DUMMY_URLS = [
-    "/my/url/1",
-    "/my/url/2",
+    '/my/url/1',
+    '/my/url/2',
   ];
 
   let service: TodosService;
@@ -30,7 +30,7 @@ describe('TodosService', () => {
     service = TestBed.inject(TodosService);
     httpMock = TestBed.inject(HttpTestingController);
 
-    getTodos = service["_getTodos"].bind(service);
+    getTodos = service['_getTodos'].bind(service);
   });
 
   it('should be created', () => {
@@ -38,8 +38,8 @@ describe('TodosService', () => {
   });
 
   it('should extract titles from http response', () => {
-    const TITLE_0 = "delectus aut autem";
-    const TITLE_1 = "quis ut nam facilis et officia qui";
+    const TITLE_0 = 'delectus aut autem';
+    const TITLE_1 = 'quis ut nam facilis et officia qui';
 
     getTodos(DUMMY_URLS[0]).pipe(last()).subscribe(result => {
       expect(result).toEqual([
@@ -50,19 +50,19 @@ describe('TodosService', () => {
 
     httpMock.expectOne({
       method: 'GET',
-      url: DUMMY_URLS[0]
+      url: DUMMY_URLS[0],
     }).flush([
       {
-        "userId": 1,
-        "id": 1,
-        "title": TITLE_0,
-        "completed": false
+        userId: 1,
+        id: 1,
+        title: TITLE_0,
+        completed: false,
       },
       {
-        "userId": 1,
-        "id": 2,
-        "title": TITLE_1,
-        "completed": false
+        userId: 1,
+        id: 2,
+        title: TITLE_1,
+        completed: false,
       }
     ]);
   });
@@ -78,7 +78,7 @@ describe('TodosService', () => {
 
     httpMock.expectOne({
       method: 'GET',
-      url: DUMMY_URLS[0]
+      url: DUMMY_URLS[0],
     }).error(new ErrorEvent('error', {
       error: {
         message: ERROR_MSG,
@@ -97,7 +97,7 @@ describe('TodosService', () => {
 
     httpMock.expectOne({
       method: 'GET',
-      url: DUMMY_URLS[0]
+      url: DUMMY_URLS[0],
     }).flush({}, {
       status: 404,
       statusText: ERROR_MSG,
@@ -105,8 +105,8 @@ describe('TodosService', () => {
   });
 
   it('should return all todos on empty filterToken', () => {
-    const TITLE_0 = "delectus aut autem";
-    const TITLE_1 = "quis ut nam facilis et officia qui";
+    const TITLE_0 = 'delectus aut autem';
+    const TITLE_1 = 'quis ut nam facilis et officia qui';
 
     service.getFilteredTodos('', DUMMY_URLS).pipe(last()).subscribe({
       next(value) {
@@ -122,33 +122,33 @@ describe('TodosService', () => {
 
     httpMock.expectOne({
       method: 'GET',
-      url: DUMMY_URLS[0]
+      url: DUMMY_URLS[0],
     }).flush([
       {
-        "userId": 1,
-        "id": 1,
-        "title": TITLE_0,
-        "completed": false
+        userId: 1,
+        id: 1,
+        title: TITLE_0,
+        completed: false,
       },
     ]);
 
     httpMock.expectOne({
       method: 'GET',
-      url: DUMMY_URLS[1]
+      url: DUMMY_URLS[1],
     }).flush([
       {
-        "userId": 1,
-        "id": 2,
-        "title": TITLE_1,
-        "completed": false
+        userId: 1,
+        id: 2,
+        title: TITLE_1,
+        completed: false,
       }
     ]);
   });
 
   it('should return filtered todos on non-empty filterToken', () => {
-    const TITLE_0 = "delectus aut autem";
-    const TITLE_1 = "quis ut nam facilis et officia qui";
-    const FILTER_TOKEN = "quis";
+    const TITLE_0 = 'delectus aut autem';
+    const TITLE_1 = 'quis ut nam facilis et officia qui';
+    const FILTER_TOKEN = 'quis';
 
     service.getFilteredTodos(FILTER_TOKEN, DUMMY_URLS).pipe(last()).subscribe({
       next(value) {
@@ -161,25 +161,25 @@ describe('TodosService', () => {
 
     httpMock.expectOne({
       method: 'GET',
-      url: DUMMY_URLS[0]
+      url: DUMMY_URLS[0],
     }).flush([
       {
-        "userId": 1,
-        "id": 1,
-        "title": TITLE_0,
-        "completed": false
+        userId: 1,
+        id: 1,
+        title: TITLE_0,
+        completed: false,
       },
     ]);
 
     httpMock.expectOne({
       method: 'GET',
-      url: DUMMY_URLS[1]
+      url: DUMMY_URLS[1],
     }).flush([
       {
-        "userId": 1,
-        "id": 2,
-        "title": TITLE_1,
-        "completed": false
+        userId: 1,
+        id: 2,
+        title: TITLE_1,
+        completed: false,
       }
     ]);
   });
