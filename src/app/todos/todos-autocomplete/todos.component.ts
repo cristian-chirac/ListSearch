@@ -72,12 +72,8 @@ export class TodosComponent implements AfterViewInit, OnDestroy {
     switchMap(searchString => this._todosService.getFilteredTodos(searchString, this.sourceUrls)),
     map(({ filteredTodos }) => filteredTodos),
     tap(todos => {
-      if (!this.selectedTodoTitle) return;
-
-      const selectedTodoIndex = todos.findIndex(todo => todo.title === this.selectedTodoTitle);
-      if (selectedTodoIndex >= 0) {
+        const selectedTodoIndex = todos.findIndex(todo => todo.title === this.selectedTodoTitle);
         this._focusSuggestionIndex$.next(selectedTodoIndex);
-      }
     }),
     catchError(err => {
       this._errorMessage$.next(err);
@@ -135,7 +131,7 @@ export class TodosComponent implements AfterViewInit, OnDestroy {
       withLatestFrom(this.todosListViewElements.changes),
       tap(([suggestionIndex, resultsElems]) => {
         const suggestionElem = resultsElems.toArray()[suggestionIndex];
-        suggestionElem.nativeElement.scrollIntoView({
+        suggestionElem?.nativeElement.scrollIntoView({
           behavior: 'smooth',
           block: 'end',
           inline: 'nearest',
