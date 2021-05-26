@@ -25,14 +25,14 @@ export class SearchDropdownComponent {
 
     constructor() { }
 
-    onItemSelected(item: ITodo) {
+    public onItemSelected(item: ITodo) {
         this.selectedValue$.next(item);
         this.showsAutocomplete$.next(false);
 
         this.itemSelected.emit(item);
     }
 
-    closeAutocomplete() {
+    public closeAutocomplete() {
         this.showsAutocomplete$.next(false);
     }
 
