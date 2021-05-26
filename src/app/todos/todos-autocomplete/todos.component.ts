@@ -58,9 +58,11 @@ export class TodosComponent implements AfterViewInit, OnDestroy {
     public search = new FormControl('');
     public searchText$ = this.search.valueChanges;
     public focusSuggestionIndexAction$: Observable<number>;
+    public errorMessageAction$: Observable<string>;
 
     public results$ = this.searchText$.pipe(
         startWith(''),
+        tap(() => this._errorMessage$.next('')),
         debounceTime(100),
         switchMap(searchString => this._todosService.getFilteredTodos(searchString)),
         map(({ filteredTodos }) => filteredTodos),
@@ -68,7 +70,10 @@ export class TodosComponent implements AfterViewInit, OnDestroy {
             const selectedTodoIndex = todos.findIndex(todo => todo.id === this.selectedTodo.id);
             this._focusSuggestionIndex$.next(selectedTodoIndex);
         }),
-        catchError(() => []),
+        catchError(err => {
+            this._errorMessage$.next(err);
+            return [];
+        }),
     );
 
     private _focusSuggestionIndex$ = new BehaviorSubject<number>(-1);
@@ -79,8 +84,10 @@ export class TodosComponent implements AfterViewInit, OnDestroy {
 
     private _destroyed$ = new Subject();
     private _focusSuggestionEnter$ = new Subject<void>();
+    private _errorMessage$ = new BehaviorSubject<string>('');
 
     constructor(private _todosService: TodosService) {
+        this.errorMessageAction$ = this._errorMessage$.asObservable();
         this.focusSuggestionIndexAction$ = this._focusSuggestionIndex$.asObservable();
 
         this._focusSuggestionArrowMove$.pipe(
