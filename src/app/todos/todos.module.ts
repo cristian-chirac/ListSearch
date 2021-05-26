@@ -34,6 +34,6 @@ import { TodosComponent } from './todos-autocomplete/todos.component';
   ],
   exports: [
     SearchDropdownComponent,
-  ]
+  ],
 })
 export class TodosModule { }

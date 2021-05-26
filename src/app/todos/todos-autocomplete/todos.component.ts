@@ -137,7 +137,7 @@ export class TodosComponent implements AfterViewInit, OnDestroy {
         this._destroyed$.next();
     }
 
-    public todoSelectedHandler(item: ITodo) {
+    public emitTodoSelected(item: ITodo) {
         this.itemSelected.emit(item);
     }
 
