@@ -28,8 +28,8 @@ import {
 export class TodosService {
     constructor(private _http: HttpClient) { }
 
-    public getFilteredTodos(filterToken: string): Observable<IFilteredTodos> {
-        return combineLatest(TODOS_URLS.map(
+    public getFilteredTodos(filterToken: string, todosUrls = TODOS_URLS): Observable<IFilteredTodos> {
+        return combineLatest(todosUrls.map(
             this._getTodos,
         )).pipe(
             skip(1),
