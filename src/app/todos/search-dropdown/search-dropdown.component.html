@@ -2,14 +2,8 @@
   showsAutocomplete: showsAutocomplete$ | async,
   selectedValue: selectedValue$ | async
 } as state"
+(clickOutside)="closeAutocomplete()"
 class="dropdown-container">
-  <ui-todos-autocomplete
-    *ngIf="state.showsAutocomplete; else searchDropdown"
-    [selectedTodo]="state.selectedValue"
-    (itemSelected)="onItemSelected($event)"
-    (close)="closeAutocomplete()"
-  ></ui-todos-autocomplete>
-  <ng-template #searchDropdown>
     <input [value]="state.selectedValue.title"
       (click)="showAutocomplete($event)"
       (focus)="showAutocomplete()"
@@ -17,7 +11,14 @@ class="dropdown-container">
       type="text"
       data-testId="search-input"
       placeholder="Select Item"
-      readonly>
-  </ng-template>
+      readonly
+    >
+    <ui-todos-autocomplete
+        *ngIf="state.showsAutocomplete"
+        [selectedTodo]="state.selectedValue"
+        (itemSelected)="onItemSelected($event)"
+        (close)="closeAutocomplete()"
+        class="dropdown-widget"
+    ></ui-todos-autocomplete>
 </div>
 

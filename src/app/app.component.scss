@@ -1,16 +1,11 @@
 .app-container {
   width: 100%;
   height: 100%;
-  display: grid;
-  grid-template-areas:
-    "head       head      head"
-    "body-left  body      body-right"
-    "foot       foot      foot"
-    ;
-  grid-template-rows: 45% 50% 5%;
-  grid-template-columns: 25% 50% 25%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .todos-search-dropdown {
-  grid-area: body;
+  width: 50%;
 }
