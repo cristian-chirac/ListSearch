@@ -11,12 +11,13 @@
 
     .search-header {
         display: flex;
+        position: relative;
         flex-direction: column;
         height: auto;
         justify-content: space-around;
 
         .search-bar {
-            $search-bar-icon-img: url(../images/Search_Icon.svg);
+            $search-bar-icon-img: url(../../../assets/images/Search_Icon.svg);
             $search-bar-icon-size: 1.5rem;
             $search-bar-shadow: none;
             $search-bar-cursor: text;
@@ -26,7 +27,19 @@
                 $search-bar-shadow,
                 $search-bar-cursor
             );
+
             background-image: $search-bar-icon-img;
+            padding-right: 2.5rem;
+        }
+
+        .remove-button {
+            position: absolute;
+            right: 0;
+        }
+
+        .remove-button:focus {
+            outline-style: solid;
+            outline-width: thin;
         }
     }
 

@@ -1,6 +1,7 @@
 <div class="app-container">
   <ui-search-dropdown
     (itemSelected)="logTodo($event)"
+    (selectionCleared)="logSelectionCleared()"
     class="todos-search-dropdown"
   ></ui-search-dropdown>
 </div>

@@ -47,11 +47,16 @@ export class TodosComponent implements AfterViewInit, OnDestroy {
 
     @Output()
     public itemSelected = new EventEmitter<ITodo>();
+
+    @Output()
+    public selectionCleared = new EventEmitter<void>();
+
     @Output()
     public close = new EventEmitter<void>();
 
     @ViewChild('searchBarInput', { static: true })
     public searchBarInput!: ElementRef;
+
     @ViewChildren('todos')
     public todosListViewElements!: QueryList<ElementRef>;
 
@@ -116,7 +121,7 @@ export class TodosComponent implements AfterViewInit, OnDestroy {
         ).subscribe();
     }
 
-    ngAfterViewInit(): void {
+    ngAfterViewInit() {
         this.searchBarInput.nativeElement.focus();
 
         this._focusSuggestionIndex$.pipe(
@@ -141,6 +146,10 @@ export class TodosComponent implements AfterViewInit, OnDestroy {
         this.itemSelected.emit(item);
     }
 
+    public clearSelectedValue() {
+        this.selectionCleared.emit();
+    }
+
     @HostListener('window:keyup', ['$event'])
     public keyEvent(event: KeyboardEvent) {
         switch (event.key) {
@@ -152,9 +161,12 @@ export class TodosComponent implements AfterViewInit, OnDestroy {
                 this._focusSuggestionArrowMove$.next(event.key);
                 break;
             case KEY_NAMES.ENTER:
+                if (this._focusSuggestionIndex$.value < 0) {
+                    return;
+                }
+
                 this._focusSuggestionEnter$.next();
                 break;
         }
     }
-
 }

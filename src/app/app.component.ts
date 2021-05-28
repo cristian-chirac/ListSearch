@@ -15,4 +15,8 @@ export class AppComponent {
     public logTodo(item: ITodo) {
         console.log(`Selected todo: ${item.title}.`);
     }
+
+    public logSelectionCleared() {
+        console.log('Todo selection cleared!');
+    }
 }

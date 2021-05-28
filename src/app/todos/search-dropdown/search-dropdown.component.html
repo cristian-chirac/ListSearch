@@ -5,7 +5,7 @@
 (clickOutside)="closeAutocomplete()"
 class="dropdown-container">
     <input [value]="state.selectedValue.title"
-      (click)="showAutocomplete($event)"
+      (click)="showAutocomplete()"
       (focus)="showAutocomplete()"
       class="search-bar"
       type="text"
@@ -17,6 +17,7 @@ class="dropdown-container">
         *ngIf="state.showsAutocomplete"
         [selectedTodo]="state.selectedValue"
         (itemSelected)="onItemSelected($event)"
+        (selectionCleared)="clearSelectedValue()"
         (close)="closeAutocomplete()"
         class="dropdown-widget"
     ></ui-todos-autocomplete>

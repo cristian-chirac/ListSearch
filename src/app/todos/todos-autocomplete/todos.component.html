@@ -15,6 +15,14 @@
             placeholder="Type here to search"
             data-testId="search-input"
         >
+        <button
+            (click)="clearSelectedValue()"
+            mat-icon-button
+            aria-label="Clear selected item"
+            class="remove-button"
+        >
+            <mat-icon>close</mat-icon>
+        </button>
     </div>
 
     <div class="todos-list-container">

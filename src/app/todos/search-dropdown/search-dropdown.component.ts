@@ -20,6 +20,9 @@ export class SearchDropdownComponent {
     @Output()
     public itemSelected = new EventEmitter<ITodo>();
 
+    @Output()
+    public selectionCleared = new EventEmitter<void>();
+
     public showsAutocomplete$ = new BehaviorSubject(false);
     public selectedValue$ = new BehaviorSubject<ITodo>(EMPTY_TODO);
 
@@ -27,7 +30,7 @@ export class SearchDropdownComponent {
 
     public onItemSelected(item: ITodo) {
         this.selectedValue$.next(item);
-        this.showsAutocomplete$.next(false);
+        this.closeAutocomplete();
 
         this.itemSelected.emit(item);
     }
@@ -36,9 +39,15 @@ export class SearchDropdownComponent {
         this.showsAutocomplete$.next(false);
     }
 
-    public showAutocomplete(event?: MouseEvent) {
-        event?.stopPropagation();
+    public showAutocomplete() {
         this.showsAutocomplete$.next(true);
+    }
+
+    public clearSelectedValue() {
+        this.selectedValue$.next(EMPTY_TODO);
+        this.closeAutocomplete();
+
+        this.selectionCleared.emit();
     }
 
 }
