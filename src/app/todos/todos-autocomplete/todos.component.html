@@ -6,7 +6,10 @@
 } as state"
     class="todos-container"
 >
-    <div class="search-header">
+    <div class="search-header"
+        cdkMonitorSubtreeFocus
+        (cdkFocusChange)="$event || close.emit()"
+    >
         <input #searchBarInput
             [formControl]="search"
             autocomplete="off"

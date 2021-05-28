@@ -1,3 +1,4 @@
+import { A11yModule } from '@angular/cdk/a11y';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
@@ -25,6 +26,7 @@ import { TodosComponent } from './todos-autocomplete/todos.component';
     SearchDropdownComponent,
   ],
   imports: [
+    A11yModule,
     CommonModule,
     MatButtonModule,
     MatIconModule,

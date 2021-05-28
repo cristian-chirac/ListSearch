@@ -5,6 +5,7 @@
 (clickOutside)="closeAutocomplete()"
 class="dropdown-container">
     <input [value]="state.selectedValue.title"
+      [tabindex]="state.showsAutocomplete ? -1 : 0"
       (click)="showAutocomplete()"
       (focus)="showAutocomplete()"
       class="search-bar"
