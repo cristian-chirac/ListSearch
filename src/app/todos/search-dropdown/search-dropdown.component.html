@@ -4,19 +4,23 @@
 } as state"
 (clickOutside)="closeAutocomplete()"
 class="dropdown-container">
-  <todos-autocomplete
-    *ngIf="state.showsAutocomplete; else searchDropdown"
-    [sourceUrls]="sourceUrls"
-    (itemSelected)="onItemSelected($event)"
-    (close)="closeAutocomplete()"
-  ></todos-autocomplete>
-  <ng-template #searchDropdown>
-    <input [(ngModel)]="state.selectedValue"
-      (click)="showAutocomplete($event)"
+    <input [value]="state.selectedValue.title"
+      [tabindex]="state.showsAutocomplete ? -1 : 0"
+      (click)="showAutocomplete()"
+      (focus)="showAutocomplete()"
       class="search-bar"
       type="text"
       data-testId="search-input"
-      readonly>
-  </ng-template>
+      placeholder="Select Item"
+      readonly
+    >
+    <ui-todos-autocomplete
+        *ngIf="state.showsAutocomplete"
+        [selectedTodo]="state.selectedValue"
+        (itemSelected)="onItemSelected($event)"
+        (selectionCleared)="clearSelectedValue()"
+        (close)="closeAutocomplete()"
+        class="dropdown-widget"
+    ></ui-todos-autocomplete>
 </div>
 

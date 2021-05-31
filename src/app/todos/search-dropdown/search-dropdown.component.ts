@@ -2,44 +2,52 @@ import {
     ChangeDetectionStrategy,
     Component,
     EventEmitter,
-    Input,
     Output,
 } from '@angular/core';
 
 import { BehaviorSubject } from 'rxjs';
+import { EMPTY_TODO } from 'src/app/common/constants/todos_utils';
 
 import { ITodo } from '../models/Todo';
 
 @Component({
-  selector: 'search-dropdown',
-  templateUrl: './search-dropdown.component.html',
-  styleUrls: ['./search-dropdown.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'ui-search-dropdown',
+    templateUrl: './search-dropdown.component.html',
+    styleUrls: ['./search-dropdown.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchDropdownComponent {
-  @Input() sourceUrls: string[] = [];
+    @Output()
+    public itemSelected = new EventEmitter<ITodo>();
 
-  @Output() itemSelected = new EventEmitter<ITodo>();
+    @Output()
+    public selectionCleared = new EventEmitter<void>();
 
-  public showsAutocomplete$ = new BehaviorSubject<boolean>(false);
-  public selectedValue$ = new BehaviorSubject<string>("Select Item");
+    public showsAutocomplete$ = new BehaviorSubject(false);
+    public selectedValue$ = new BehaviorSubject<ITodo>(EMPTY_TODO);
 
-  constructor() {}
+    constructor() { }
 
-  onItemSelected(item: ITodo) {
-    this.selectedValue$.next(item.title);
-    this.showsAutocomplete$.next(false);
+    public onItemSelected(item: ITodo) {
+        this.selectedValue$.next(item);
+        this.closeAutocomplete();
 
-    this.itemSelected.emit(item);
-  }
+        this.itemSelected.emit(item);
+    }
 
-  closeAutocomplete() {
-    this.showsAutocomplete$.next(false);
-  }
+    public closeAutocomplete() {
+        this.showsAutocomplete$.next(false);
+    }
 
-  public showAutocomplete(event: MouseEvent) {
-    event.stopPropagation();
-    this.showsAutocomplete$.next(true);
-  }
+    public showAutocomplete() {
+        this.showsAutocomplete$.next(true);
+    }
+
+    public clearSelectedValue() {
+        this.selectedValue$.next(EMPTY_TODO);
+        this.closeAutocomplete();
+
+        this.selectionCleared.emit();
+    }
 
 }

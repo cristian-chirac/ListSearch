@@ -7,7 +7,6 @@ import {
     HostListener,
     Input,
     OnDestroy,
-    OnInit,
     Output,
     QueryList,
     ViewChild,
@@ -17,141 +16,157 @@ import { FormControl } from '@angular/forms';
 
 import {
     BehaviorSubject,
-    combineLatest,
     Observable,
     Subject,
-    Subscription,
 } from 'rxjs';
 import {
     catchError,
     debounceTime,
-    filter,
     map,
     startWith,
     switchMap,
+    takeUntil,
     tap,
     withLatestFrom,
 } from 'rxjs/operators';
 import { KEY_NAMES } from 'src/app/common/constants/keyboard_utils';
+import { EMPTY_TODO } from 'src/app/common/constants/todos_utils';
 
 import { ITodo } from '../models/Todo';
 import { TodosService } from './todos.service';
 
 @Component({
-  selector: 'todos-autocomplete',
-  templateUrl: './todos.component.html',
-  styleUrls: ['./todos.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'ui-todos-autocomplete',
+    templateUrl: './todos.component.html',
+    styleUrls: ['./todos.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TodosComponent implements AfterViewInit, OnDestroy {
-  @Input() sourceUrls: string[] = [];
+    @Input()
+    public selectedTodo: ITodo = EMPTY_TODO;
 
-  @Output() itemSelected = new EventEmitter<ITodo>();
-  @Output() close = new EventEmitter<void>();
+    @Output()
+    public itemSelected = new EventEmitter<ITodo>();
 
-  @ViewChild('searchBarInput', {static: true}) searchBarInput!: ElementRef;
-  @ViewChildren('todos') todosListViewElements!: QueryList<any>;
+    @Output()
+    public selectionCleared = new EventEmitter<void>();
 
-  public search = new FormControl('');
-  public errorMessageAction$: Observable<string>;
-  public searchText$ = this.search.valueChanges;
-  public focusSuggestionIndexAction$: Observable<number>;
+    @Output()
+    public close = new EventEmitter<void>();
 
-  public results$ = this.searchText$.pipe(
-    startWith(''),
-    tap(() => this._errorMessage$.next('')),
-    debounceTime(100),
-    switchMap(searchString => this._todosService.getFilteredTodos(searchString, this.sourceUrls)),
-    map(({filteredTodos}) => filteredTodos),
-    catchError(err => {
-      this._errorMessage$.next(err);
-      return [];
-    })
-  );
+    @ViewChild('searchBarInput', { static: true })
+    public searchBarInput!: ElementRef;
 
-  private _errorMessage$ = new BehaviorSubject<string>('');
+    @ViewChildren('todos')
+    public todosListViewElements!: QueryList<ElementRef>;
 
-  private _focusSuggestionIndex$ = new BehaviorSubject<number>(-1);
+    public search = new FormControl('');
+    public searchText$ = this.search.valueChanges;
+    public focusSuggestionIndexAction$: Observable<number>;
+    public errorMessageAction$: Observable<string>;
 
-  private _focusSuggestionArrowMove$ = new Subject<
-    typeof KEY_NAMES.ARROW_UP |
-    typeof KEY_NAMES.ARROW_DOWN
-  >();
-  private _focusSuggestionArrowMoveSubscription: Subscription;
-  private _focusSuggestionScrollToSubscription!: Subscription;
+    public results$ = this.searchText$.pipe(
+        startWith(''),
+        tap(() => this._errorMessage$.next('')),
+        debounceTime(100),
+        switchMap(searchString => this._todosService.getFilteredTodos(searchString)),
+        map(({ filteredTodos }) => filteredTodos),
+        tap(todos => {
+            const selectedTodoIndex = todos.findIndex(todo => todo.id === this.selectedTodo.id);
+            this._focusSuggestionIndex$.next(selectedTodoIndex);
+        }),
+        catchError(err => {
+            this._errorMessage$.next(err);
+            return [];
+        }),
+    );
 
-  private _focusSuggestionEnter$ = new Subject<void>();
-  private _focusSuggestionEnterSubscription!: Subscription;
+    private _focusSuggestionIndex$ = new BehaviorSubject<number>(-1);
+    private _focusSuggestionArrowMove$ = new Subject<
+        typeof KEY_NAMES.ARROW_UP |
+        typeof KEY_NAMES.ARROW_DOWN
+    >();
 
-  constructor(private _todosService: TodosService) {
-    this.errorMessageAction$ = this._errorMessage$.asObservable();
-    this.focusSuggestionIndexAction$ = this._focusSuggestionIndex$.asObservable();
+    private _destroyed$ = new Subject();
+    private _focusSuggestionEnter$ = new Subject<void>();
+    private _errorMessage$ = new BehaviorSubject<string>('');
 
-    this._focusSuggestionArrowMoveSubscription = this._focusSuggestionArrowMove$.pipe(
-      withLatestFrom(
-        this.results$.pipe(map(results => results.length)),
-        this._focusSuggestionIndex$,
-      ),
-      tap(([arrowKey, resultsLength, currFocusIndex]) => {
-        const direction = arrowKey === KEY_NAMES.ARROW_DOWN ? 1 : -1;
-        const newIndex = currFocusIndex + direction;
+    constructor(private _todosService: TodosService) {
+        this.errorMessageAction$ = this._errorMessage$.asObservable();
+        this.focusSuggestionIndexAction$ = this._focusSuggestionIndex$.asObservable();
 
-        if (newIndex < 0 || newIndex >= resultsLength) {
-          return;
-        }
+        this._focusSuggestionArrowMove$.pipe(
+            withLatestFrom(
+                this.results$.pipe(map(results => results.length)),
+            ),
+            tap(([arrowKey, resultsLength]) => {
+                const direction = arrowKey === KEY_NAMES.ARROW_DOWN ? 1 : -1;
+                const newIndex = this._focusSuggestionIndex$.value + direction;
 
-        this._focusSuggestionIndex$.next(newIndex);
-      }),
-    ).subscribe();
+                if (newIndex < 0 || newIndex >= resultsLength) {
+                    return;
+                }
 
-    this._focusSuggestionEnterSubscription = this._focusSuggestionEnter$.pipe(
-      withLatestFrom(
-        this.results$,
-        this._focusSuggestionIndex$
-      ),
-      tap(([_, todos, selectedTodoIndex]) => this.itemSelected.emit(todos[selectedTodoIndex])),
-    ).subscribe();
-  }
+                this._focusSuggestionIndex$.next(newIndex);
+            }),
+            takeUntil(this._destroyed$),
+        ).subscribe();
 
-  ngAfterViewInit(): void {
-    this.searchBarInput.nativeElement.focus();
-    this._focusSuggestionScrollToSubscription = this._focusSuggestionIndex$.pipe(
-      withLatestFrom(this.todosListViewElements.changes),
-      tap(([suggestionIndex, resultsElems]) => {
-        const suggestionElem = resultsElems.toArray()[suggestionIndex];
-        suggestionElem.nativeElement.scrollIntoView({
-          behavior: "smooth",
-          block: "end",
-          inline: "nearest"
-        });
-      }),
-    ).subscribe();
-  }
-
-  ngOnDestroy(): void {
-    this._focusSuggestionArrowMoveSubscription.unsubscribe();
-    this._focusSuggestionEnterSubscription.unsubscribe();
-    this._focusSuggestionScrollToSubscription.unsubscribe();
-  }
-
-  public todoSelectedHandler(item: ITodo) {
-    this.itemSelected.emit(item);
-  }
-
-  @HostListener('window:keyup', ['$event'])
-  private keyEvent(event: KeyboardEvent) {
-    switch (event.key) {
-      case KEY_NAMES.ESCAPE:
-        this.close.emit();
-        break;
-      case KEY_NAMES.ARROW_DOWN:
-      case KEY_NAMES.ARROW_UP:
-        this._focusSuggestionArrowMove$.next(event.key);
-        break;
-      case KEY_NAMES.ENTER:
-        this._focusSuggestionEnter$.next();
-        break;
+        this._focusSuggestionEnter$.pipe(
+            withLatestFrom(
+                this.results$,
+            ),
+            tap(([_, todos]) => this.itemSelected.emit(todos[this._focusSuggestionIndex$.value])),
+            takeUntil(this._destroyed$),
+        ).subscribe();
     }
-  }
 
+    ngAfterViewInit() {
+        this.searchBarInput.nativeElement.focus();
+
+        this._focusSuggestionIndex$.pipe(
+            withLatestFrom(this.todosListViewElements.changes),
+            tap(([suggestionIndex, resultsElems]) => {
+                const suggestionElem = resultsElems.toArray()[suggestionIndex];
+                suggestionElem?.nativeElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'end',
+                    inline: 'nearest',
+                });
+            }),
+            takeUntil(this._destroyed$),
+        ).subscribe();
+    }
+
+    ngOnDestroy() {
+        this._destroyed$.next();
+    }
+
+    public emitTodoSelected(item: ITodo) {
+        this.itemSelected.emit(item);
+    }
+
+    public clearSelectedValue() {
+        this.selectionCleared.emit();
+    }
+
+    @HostListener('window:keyup', ['$event'])
+    public keyEvent(event: KeyboardEvent) {
+        switch (event.key) {
+            case KEY_NAMES.ESCAPE:
+                this.close.emit();
+                break;
+            case KEY_NAMES.ARROW_DOWN:
+            case KEY_NAMES.ARROW_UP:
+                this._focusSuggestionArrowMove$.next(event.key);
+                break;
+            case KEY_NAMES.ENTER:
+                if (this._focusSuggestionIndex$.value < 0) {
+                    return;
+                }
+
+                this._focusSuggestionEnter$.next();
+                break;
+        }
+    }
 }

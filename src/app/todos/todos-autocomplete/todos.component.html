@@ -1,35 +1,58 @@
 <div *ngLet="{
-  errorMessageAction: errorMessageAction$ | async,
-  results: results$ | async,
-  searchText: searchText$ | async,
-  focusSuggestionIndex: focusSuggestionIndexAction$ | async
+    errorMessage: errorMessageAction$ | async,
+    results: results$ | async,
+    searchText: searchText$ | async,
+    focusSuggestionIndex: focusSuggestionIndexAction$ | async
 } as state"
-class="todos-container">
-  <div class="search-header">
-    <input #searchBarInput
-      [formControl]="search"
-      autocomplete="off"
-      class="search-bar"
-      type="text"
-      placeholder="Type here to search"
-      data-testId="search-input">
-  </div>
-
-  <div class="todos-list-container">
-    <div *ngIf="state.errorMessage; else searchResults"
-      class="alert alert-danger error-message">
-      {{ state.errorMessage }}
+    class="todos-container"
+>
+    <div class="search-header"
+        cdkMonitorSubtreeFocus
+        (cdkFocusChange)="$event || close.emit()"
+    >
+        <input #searchBarInput
+            [formControl]="search"
+            autocomplete="off"
+            class="search-bar"
+            type="text"
+            placeholder="Type here to search"
+            data-testId="search-input"
+        >
+        <button
+            (click)="clearSelectedValue()"
+            mat-icon-button
+            aria-label="Clear selected item"
+            class="remove-button"
+        >
+            <mat-icon>close</mat-icon>
+        </button>
     </div>
-    <ng-template #searchResults>
-      <div *ngIf="state.results"
-        data-testId="todos-list">
-        <p #todos *ngFor="let item of state.results; index as i"
-          [innerHTML]="item.title | emphasizePattern: state.searchText"
-          [class.focus-suggestion]="i === state.focusSuggestionIndex"
-          (click)="todoSelectedHandler(item)"
-          class="default-suggestion"
-          >
-      </div>
-    </ng-template>
-  </div>
+
+    <div class="todos-list-container">
+        <div *ngIf="state.errorMessage; else searchResults"
+            class="alert alert-danger error-message"
+        >
+            {{ state.errorMessage }}
+        </div>
+        <ng-template #searchResults>
+            <div *ngIf="state.results && state.results.length > 0; else noResults"
+                data-testId="todos-list"
+            >
+                <p #todos
+                    *ngFor="let item of state.results; index as i"
+                    [innerHTML]="item.title | emphasizePattern: state.searchText"
+                    [class.focus-suggestion]="i === state.focusSuggestionIndex"
+                    (click)="emitTodoSelected(item)"
+                    class="default-suggestion"
+                >
+            </div>
+            <ng-template #noResults>
+                <p *ngIf="state.results && state.results.length === 0"
+                    class="no-results-suggestion"
+                >
+                    (no results)
+                </p>
+            </ng-template>
+        </ng-template>
+    </div>
 </div>
