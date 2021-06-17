@@ -1,10 +1,18 @@
-import { Component } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+} from '@angular/core';
+
+import { ITodo } from './todos/models/Todo';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+    selector: 'ui-app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
-  title = 'ListSearch';
+    public logTodo(item: ITodo) {
+        console.log(`Selected todo: ${item.title}.`);
+    }
 }

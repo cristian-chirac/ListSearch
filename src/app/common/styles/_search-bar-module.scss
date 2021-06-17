@@ -1,23 +1,13 @@
-.search-header {
-  $search-header-height: 6rem;
-  $search-header-background-color: rgba(0, 17, 252, 0.726);
-  $search-header-shadow: 0px 2px 3px 0 rgba(0,0,0,0.5);
-
-  display: flex;
-  justify-content: space-around;
-  height: $search-header-height;
-  background-color: $search-header-background-color;
-  box-shadow: $search-header-shadow;
-}
-
-.search-bar {
+@mixin search-bar-template(
+  $search-bar-icon-size,
+  $search-bar-shadow,
+  $search-bar-cursor,
+) {
   $search-bar-height: 2.5rem;
-  $search-bar-width: 50%;
+  $search-bar-width: 100%;
   $search-bar-font-size: 1rem;
   $search-bar-border-radius: 10px;
   $search-bar-padding: 0 10px 0 50px;
-  $search-bar-icon-img: url(./images/Search_Icon.svg);
-  $search-bar-icon-size: 1.5rem;
   $search-bar-icon-position: 10px center;
 
   display: flex;
@@ -29,8 +19,9 @@
   border-width: thin;
   outline: none;
   padding: $search-bar-padding;
-  background-image: $search-bar-icon-img;
   background-size: $search-bar-icon-size;
   background-repeat: no-repeat;
   background-position: $search-bar-icon-position;
+  box-shadow: $search-bar-shadow;
+  cursor: $search-bar-cursor;
 }

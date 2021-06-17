@@ -1,3 +1,9 @@
 export interface ITodo {
-  title: string;
+    id: string;
+    title: string;
+}
+
+export interface IFilteredTodos {
+    filterToken: string;
+    filteredTodos: ITodo[];
 }

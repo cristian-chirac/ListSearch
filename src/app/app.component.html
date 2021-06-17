@@ -1,1 +1,6 @@
-<app-todos></app-todos>
+<div class="app-container">
+  <ui-search-dropdown
+    (itemSelected)="logTodo($event)"
+    class="todos-search-dropdown"
+  ></ui-search-dropdown>
+</div>

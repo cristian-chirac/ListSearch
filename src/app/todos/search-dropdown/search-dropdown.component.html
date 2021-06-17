@@ -1,0 +1,24 @@
+<div *ngLet="{
+  showsAutocomplete: showsAutocomplete$ | async,
+  selectedValue: selectedValue$ | async
+} as state"
+(clickOutside)="closeAutocomplete()"
+class="dropdown-container">
+    <input [value]="state.selectedValue.title"
+      (click)="showAutocomplete($event)"
+      (focus)="showAutocomplete()"
+      class="search-bar"
+      type="text"
+      data-testId="search-input"
+      placeholder="Select Item"
+      readonly
+    >
+    <ui-todos-autocomplete
+        *ngIf="state.showsAutocomplete"
+        [selectedTodo]="state.selectedValue"
+        (itemSelected)="onItemSelected($event)"
+        (close)="closeAutocomplete()"
+        class="dropdown-widget"
+    ></ui-todos-autocomplete>
+</div>
+
